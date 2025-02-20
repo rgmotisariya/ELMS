@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -16,14 +16,18 @@ export class LoginComponent {
     password:''
   };
 
-  router = inject(Router);
+  router = inject(HttpClient);
 
   onLogin() {
-    if(this.loginObj.username == "admin" && this.loginObj.password =="112233") {
-      this.router.navigateByUrl('dashboard')
-    } else {
-      alert("Wrong Credentials")
-    }
+    this.http.post("_url",this.loginObj).subscribe((res:any)=>{
+      if(res.result) {
+       localStorage.setItem("leaveUser",JSON.stringify(res.data));
+       this.router.navigateByUrl("dashbord")
+      } else {
+        alert(res.message)
+      }
+    });
+  
   }
 
 }
